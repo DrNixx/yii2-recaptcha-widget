@@ -113,7 +113,7 @@ function recaptcha3OnloadCallback() {
         });
     });
     
-    var timer = setInterval(recaptcha3OnloadCallback(), 110000);
+    setTimeout(recaptcha3OnloadCallback(), 110000);
 }
 JS
             , $view::POS_END);
