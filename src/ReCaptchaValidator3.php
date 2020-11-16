@@ -10,7 +10,6 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
-use yii\httpclient\Request;
 
 /**
  * reCaptcha v3 widget validator.
@@ -31,7 +30,7 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
         $secret = null,
         $siteVerifyUrl = null,
         $checkHostName = null,
-        Request $httpClientRequest = null,
+        yii\httpclient\Request $httpClientRequest = null,
         $config = []
     ) {
         if ($secret && !$this->secret) {
