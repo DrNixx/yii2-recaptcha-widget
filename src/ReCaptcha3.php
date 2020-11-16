@@ -76,6 +76,9 @@ class ReCaptcha3 extends InputWidget
         parent::__construct($config);
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
@@ -89,27 +92,41 @@ class ReCaptcha3 extends InputWidget
 
         $arguments = \http_build_query([
             'render' => $this->siteKey,
+            'onload' => 'recaptcha3OnloadCallback'
         ]);
 
         $view->registerJsFile(
             $this->jsApiUrl . '?' . $arguments,
-            ['position' => $view::POS_END]
+            ['position' => $view::POS_END, 'async' => true, 'defer' => true]
         );
         $view->registerJs(
             <<<JS
-"use strict";
-grecaptcha.ready(function() {
-    grecaptcha.execute("{$this->siteKey}", {action: "{$this->action}"}).then(function(token) {
-        jQuery("#" + "{$this->getReCaptchaId()}").val(token);
-
-        const jsCallback = "{$this->jsCallback}";
-        if (jsCallback) {
-            eval("(" + jsCallback + ")(token)");
-        }
+function recaptcha3OnloadCallback() {
+    grecaptcha.ready(function() {
+        grecaptcha.execute("{$this->siteKey}", {action: "{$this->action}"}).then(function(token) {
+            jQuery("#" + "{$this->getReCaptchaId()}").val(token);
+    
+            const jsCallback = "{$this->jsCallback}";
+            if (jsCallback) {
+                eval("(" + jsCallback + ")(token)");
+            }
+        });
     });
-});
+    
+    var timer = setInterval(recaptcha3OnloadCallback(), 110000);
+}
 JS
-            , $view::POS_READY);
+            , $view::POS_END);
+
+        if (Yii::$app->request->isAjax) {
+            $view->registerJs(
+                <<<JS
+if (typeof grecaptcha !== "undefined") {
+    recaptcha3OnloadCallback();
+}
+JS
+                , $view::POS_END);
+        }
 
         $this->customFieldPrepare();
     }

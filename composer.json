@@ -30,5 +30,11 @@
         "psr-4": {
             "himiklab\\yii2\\recaptcha\\tests\\": "tests/"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
 }

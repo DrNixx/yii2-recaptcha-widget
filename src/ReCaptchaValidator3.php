@@ -10,6 +10,7 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
+use yii\httpclient\Request;
 
 /**
  * reCaptcha v3 widget validator.
@@ -30,9 +31,9 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
         $secret = null,
         $siteVerifyUrl = null,
         $checkHostName = null,
-        yii\httpclient\Request $httpClientRequest = null,
-        $config = [])
-    {
+        Request $httpClientRequest = null,
+        $config = []
+    ) {
         if ($secret && !$this->secret) {
             $this->secret = $secret;
         }
@@ -40,13 +41,16 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
         parent::__construct($siteVerifyUrl, $checkHostName, $httpClientRequest, $config);
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
         $this->configComponentProcess();
 
         if ($this->action === null) {
-            $this->action = \preg_replace('/[^a-zA-Z\d\/]/', '', \urldecode(Yii::$app->request->url));
+            $this->action = preg_replace('/[^a-zA-Z\d\/]/', '', urldecode(Yii::$app->request->url));
         }
     }
 
@@ -54,7 +58,6 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
      * @param string|array $value
      * @return array|null
      * @throws Exception
-     * @throws \yii\base\InvalidParamException
      */
     protected function validateValue($value)
     {
@@ -74,8 +77,8 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
                         throw new Exception('Invalid recaptcha verify response.');
                     }
 
-                    if (\is_callable($this->threshold)) {
-                        $this->isValid = (bool)\call_user_func($this->threshold, $response['score']);
+                    if (is_callable($this->threshold)) {
+                        $this->isValid = (bool)call_user_func($this->threshold, $response['score']);
                     } else {
                         $this->isValid = $response['score'] >= $this->threshold;
                     }

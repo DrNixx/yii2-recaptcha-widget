@@ -10,6 +10,8 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
+use yii\base\Model;
+use yii\web\View;
 
 /**
  * ReCaptcha widget validator.
@@ -36,6 +38,9 @@ class ReCaptchaValidator2 extends ReCaptchaBaseValidator
         parent::__construct($siteVerifyUrl, $checkHostName, $httpClientRequest, $config);
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
@@ -43,14 +48,14 @@ class ReCaptchaValidator2 extends ReCaptchaBaseValidator
     }
 
     /**
-     * @param \yii\base\Model $model
+     * @param Model $model
      * @param string $attribute
-     * @param \yii\web\View $view
+     * @param View $view
      * @return string
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        $message = \addslashes($this->uncheckedMessage ?: Yii::t(
+        $message = addslashes($this->uncheckedMessage ?: Yii::t(
             'yii',
             '{attribute} cannot be blank.',
             ['attribute' => $model->getAttributeLabel($attribute)]
@@ -67,7 +72,6 @@ JS;
      * @param string|array $value
      * @return array|null
      * @throws Exception
-     * @throws \yii\base\InvalidParamException
      */
     protected function validateValue($value)
     {

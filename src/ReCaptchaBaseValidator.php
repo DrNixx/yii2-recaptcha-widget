@@ -9,7 +9,9 @@ namespace himiklab\yii2\recaptcha;
 
 use Yii;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\httpclient\Client as HttpClient;
+use yii\httpclient\Request;
 use yii\validators\Validator;
 
 /**
@@ -32,7 +34,7 @@ abstract class ReCaptchaBaseValidator extends Validator
      */
     public $siteVerifyUrl;
 
-    /** @var \yii\httpclient\Request */
+    /** @var Request */
     public $httpClientRequest;
 
     /** @var string */
@@ -77,7 +79,6 @@ abstract class ReCaptchaBaseValidator extends Validator
      * @param string $value
      * @return array
      * @throws Exception
-     * @throws \yii\base\InvalidParamException
      */
     protected function getResponse($value)
     {
@@ -93,6 +94,9 @@ abstract class ReCaptchaBaseValidator extends Validator
         return $response->data;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     protected function configComponentProcess()
     {
         /** @var ReCaptchaConfig $reCaptchaConfig */

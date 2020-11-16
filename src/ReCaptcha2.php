@@ -105,6 +105,9 @@ class ReCaptcha2 extends InputWidget
         parent::__construct($config);
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
